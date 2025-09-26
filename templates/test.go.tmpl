@@ -1,0 +1,49 @@
+package {{.Package}}
+
+import (
+	"testing"
+)
+
+const testInput = `// TODO: Add your test input here
+`
+
+const expectedPart1 = "0" // TODO: Update expected result
+const expectedPart2 = "0" // TODO: Update expected result
+
+func TestPart1(t *testing.T) {
+	solver := &Solver{}
+	result, err := solver.SolvePart1(testInput)
+	if err != nil {
+		t.Fatalf("SolvePart1 returned error: %v", err)
+	}
+
+	if result != expectedPart1 {
+		t.Errorf("SolvePart1 = %v, want %v", result, expectedPart1)
+	}
+}
+
+func TestPart2(t *testing.T) {
+	solver := &Solver{}
+	result, err := solver.SolvePart2(testInput)
+	if err != nil {
+		t.Fatalf("SolvePart2 returned error: %v", err)
+	}
+
+	if result != expectedPart2 {
+		t.Errorf("SolvePart2 = %v, want %v", result, expectedPart2)
+	}
+}
+
+func BenchmarkPart1(b *testing.B) {
+	solver := &Solver{}
+	for i := 0; i < b.N; i++ {
+		solver.SolvePart1(testInput)
+	}
+}
+
+func BenchmarkPart2(b *testing.B) {
+	solver := &Solver{}
+	for i := 0; i < b.N; i++ {
+		solver.SolvePart2(testInput)
+	}
+}
