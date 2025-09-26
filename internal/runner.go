@@ -30,7 +30,7 @@ func RunAllSolutions() {
 	if err := GenerateMarkdownSummary(results); err != nil {
 		log.Printf("Error generating markdown summary: %v", err)
 	} else {
-		fmt.Println("\n📝 Markdown summary generated: SOLUTIONS.md")
+		fmt.Println("\n📝 Markdown summary generated: README.md")
 	}
 }
 

@@ -45,7 +45,7 @@ func DisplayConsoleSummary(results []DayResult) {
 func GenerateMarkdownSummary(results []DayResult) error {
 	var md strings.Builder
 
-	md.WriteString("# 🎄 Advent of Code 2023 - Solutions Summary\n\n")
+	md.WriteString("# 🎄 Advent of Code - Solutions Summary\n\n")
 	md.WriteString(fmt.Sprintf("**Last updated:** %s\n\n", time.Now().Format("2006-01-02 15:04:05")))
 
 	// Overview stats
