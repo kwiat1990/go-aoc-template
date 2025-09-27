@@ -1,7 +1,9 @@
 package main
 
 import (
-	"os
+	"os"
+
+	"go-aoc-template/internal"
 )
 
 func main() {
