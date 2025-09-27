@@ -1,0 +1,6 @@
+.idea
+
+/solutions/**/input*
+go-aoc-template.iml
+
+.env
