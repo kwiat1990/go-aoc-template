@@ -113,7 +113,7 @@ func GenerateMarkdownSummary(results []DayResult) error {
 			result.Day, result.Day, result.Day, result.Day, result.Day, result.Day))
 	}
 
-	return os.WriteFile("SOLUTIONS.md", []byte(md.String()), 0644)
+	return os.WriteFile("README.md", []byte(md.String()), 0644)
 }
 
 func truncate(s string, maxLen int) string {
