@@ -73,7 +73,6 @@ func DiscoverAndRunDays() []DayResult {
 		part1Path := filepath.Join(dayDir, "part1.go")
 		part2Path := filepath.Join(dayDir, "part2.go")
 		inputPath := filepath.Join(dayDir, "input.txt")
-
 		if _, err := os.Stat(part1Path); os.IsNotExist(err) {
 			continue
 		}
@@ -89,6 +88,8 @@ func DiscoverAndRunDays() []DayResult {
 		start := time.Now()
 		result.Part1 = runDayPart(dayDir, "part1", inputPath)
 		result.Part1Time = time.Since(start)
+
+		fmt.Println("oko", result.Part1)
 
 		// Run Part 2
 		start = time.Now()
@@ -107,7 +108,13 @@ func DiscoverAndRunDays() []DayResult {
 }
 
 func runDayPart(dayDir, part, inputPath string) string {
-	partFile := filepath.Join(dayDir, part+".go")
+	partFile := part + ".go"
+
+	// Check if part file exists
+	fullPath := filepath.Join(dayDir, partFile)
+	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+		return fmt.Sprintf("Error: %s not found", partFile)
+	}
 
 	// Check if input file exists
 	if _, err := os.Stat(inputPath); os.IsNotExist(err) {
@@ -115,20 +122,26 @@ func runDayPart(dayDir, part, inputPath string) string {
 	}
 
 	// Check if input file is empty
-	if info, err := os.Stat(inputPath); err == nil && info.Size() == 0 {
+	if info, err := os.Stat(inputPath); err != nil {
+		return fmt.Sprintf("Error: cannot stat input: %v", err)
+	} else if info.Size() == 0 {
 		return "Empty input"
 	}
 
-	// Run the part using go run
-	cmd := exec.Command("go", "run", partFile)
-	cmd.Dir = dayDir
-
-	output, err := cmd.Output()
+	// Get absolute path to day directory
+	absDayDir, err := filepath.Abs(dayDir)
 	if err != nil {
-		if exitErr, ok := err.(*exec.ExitError); ok {
-			return fmt.Sprintf("Error: %s", string(exitErr.Stderr))
-		}
-		return fmt.Sprintf("Failed to run: %v", err)
+		return fmt.Sprintf("Error: cannot get absolute path: %v", err)
+	}
+
+	// Run the part using go run with proper working directory
+	cmd := exec.Command("go", "run", partFile)
+	cmd.Dir = absDayDir // Use absolute path
+
+	// Capture both stdout and stderr
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Sprintf("Error: %s", strings.TrimSpace(string(output)))
 	}
 
 	result := strings.TrimSpace(string(output))
