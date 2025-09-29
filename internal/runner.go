@@ -89,8 +89,6 @@ func DiscoverAndRunDays() []DayResult {
 		result.Part1 = runDayPart(dayDir, "part1", inputPath)
 		result.Part1Time = time.Since(start)
 
-		fmt.Println("oko", result.Part1)
-
 		// Run Part 2
 		start = time.Now()
 		result.Part2 = runDayPart(dayDir, "part2", inputPath)
