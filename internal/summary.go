@@ -3,35 +3,40 @@ package internal
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 	"text/tabwriter"
 	"time"
 )
 
 func DisplayConsoleSummary(results []DayResult) {
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].Day < results[j].Day
+	})
+
 	fmt.Println("\n🎄 Advent of Code Solutions Summary 🎄")
-	fmt.Println(strings.Repeat("=", 60))
+	fmt.Println(strings.Repeat("=", 80))
 	fmt.Println()
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', tabwriter.AlignRight)
-	fmt.Fprintln(w, "Day\tPart 1\tTime\tPart 2\tTime")
-	fmt.Fprintln(w, "---\t------\t----\t------\t----")
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
+	fmt.Fprintln(w, "Day\t|\tPart 1\t|\tTime\t|\tPart 2\t|\tTime")
+	fmt.Fprintln(w, "---\t|\t------\t|\t----\t|\t------\t|\t----")
 
 	totalTime := time.Duration(0)
 
 	for _, result := range results {
 		totalTime += result.Part1Time + result.Part2Time
 
-		fmt.Fprintf(w, "%d\t%s\t%v\t%s\t%v\n",
+		fmt.Fprintf(w, "%02d\t|\t%s\t|\t%s\t|\t%s\t|\t%s\n",
 			result.Day,
-			truncate(result.Part1, 15),
+			truncate(result.Part1, 20), // ← Show actual result, truncated to 20 chars
 			formatDuration(result.Part1Time),
-			truncate(result.Part2, 15),
+			truncate(result.Part2, 20), // ← Show actual result, truncated to 20 chars
 			formatDuration(result.Part2Time))
 	}
 
-	fmt.Fprintln(w, "---\t------\t----\t------\t----")
-	fmt.Fprintf(w, "Total\t\t%v\t\t\n", formatDuration(totalTime))
+	fmt.Fprintln(w, "---\t|\t------\t|\t----\t|\t------\t|\t----")
+	fmt.Fprintf(w, "Total\t|\t\t|\t%s\t|\t\t|\t\n", formatDuration(totalTime))
 	w.Flush()
 
 	fmt.Println()
@@ -73,19 +78,23 @@ func GenerateMarkdownSummary(results []DayResult) error {
 
 	// Solutions table
 	md.WriteString("## 🏆 Solutions\n\n")
-	md.WriteString("| Day | Part 1 | Time | Part 2 | Time | Files |\n")
-	md.WriteString("|-----|--------|------|--------|------|-------|\n")
+	md.WriteString("| Day | Part 1 | Part 2 | Total Time | Files |\n")
+	md.WriteString("|-----|--------|--------|------------|-------|\n")
 
 	for _, result := range results {
 		status1 := getStatusIcon(result.Part1)
 		status2 := getStatusIcon(result.Part2)
+		totalTime := result.Part1Time + result.Part2Time
 
-		md.WriteString(fmt.Sprintf("| %02d | %s `%s` | %s | %s `%s` | %s | [Part1](solutions/day%02d/part1.go) \\| [Part2](solutions/day%02d/part2.go) \\| [Tests](solutions/day%02d/day%02d_test.go) |\n",
+		// Show just status icon and time, not the actual result
+		part1Display := fmt.Sprintf("%s %s", status1, formatDuration(result.Part1Time))
+		part2Display := fmt.Sprintf("%s %s", status2, formatDuration(result.Part2Time))
+
+		md.WriteString(fmt.Sprintf("| %02d | %s | %s | %s | [Part1](solutions/day%02d/part1.go) \\| [Part2](solutions/day%02d/part2.go) \\| [Tests](solutions/day%02d/day%02d_test.go) |\n",
 			result.Day,
-			status1, truncateForMD(result.Part1, 15),
-			formatDuration(result.Part1Time),
-			status2, truncateForMD(result.Part2, 15),
-			formatDuration(result.Part2Time),
+			part1Display,
+			part2Display,
+			formatDuration(totalTime),
 			result.Day, result.Day, result.Day, result.Day))
 	}
 
@@ -117,13 +126,6 @@ func GenerateMarkdownSummary(results []DayResult) error {
 }
 
 func truncate(s string, maxLen int) string {
-	if len(s) <= maxLen {
-		return s
-	}
-	return s[:maxLen-3] + "..."
-}
-
-func truncateForMD(s string, maxLen int) string {
 	if len(s) <= maxLen {
 		return s
 	}
