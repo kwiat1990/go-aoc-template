@@ -2,19 +2,34 @@ package {{.Package}}
 
 import (
 	"fmt"
+	"os"
 
-    "go-aoc-template/utils"
+	"go-aoc-template/utils"
 )
 
-type Solver struct{}
+func main() {
+	input, err := os.ReadFile("input.txt")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		os.Exit(1)
+	}
 
-func (s *Solver) SolvePart1(input string) (string, error) {
+	result, err := solvePart1(string(input))
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Print(result)
+}
+
+func solvePart1(input string) (string, error) {
 	lines := utils.ReadLines(input)
-	
+
 	// TODO: Implement {{.Title}} Part 1 solution
-	// Remove this placeholder code:
-	_ = lines
-	
-	result := 0
-	return fmt.Sprintf("%d", result), nil
+    	// Remove this placeholder code:
+    	_ = lines
+
+    result := 0
+    return fmt.Sprintf("%d", result), nil
 }
